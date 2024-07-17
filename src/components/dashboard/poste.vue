@@ -41,7 +41,7 @@ const likeHandler = (id) => {
     <div class="w-full h-full">
         <router-link :to="data?.post.id">
             <section class="flex justify-start items-center space-x-2">
-                <img class="object-contain w-10 h-10"
+                <img class="object-contain w-10 h-10 rounded-full"
                     :src="data.post?.userWhoPost[2] ? data.post?.userWhoPost[2] : 'http://localhost:3000/src/assets/user.png'"
                     alt="">
                 <div>

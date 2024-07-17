@@ -50,7 +50,7 @@ const usePostStore = defineStore('posts', ()=>{
                 createdAt: serverTimestamp()
             }).then(()=> alert('your post successfully uploaded'))
         }).catch((error) => {
-            console.log(error.code)
+            console.log(error)
         })
            
        

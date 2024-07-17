@@ -22,7 +22,7 @@ const auth = useAuthStore()
                 v-show="auth?.user?.id !== null">
                 Profile
                 <img :src="auth.user?.photo ? auth.user?.photo : 'http://localhost:3000/src/assets/user.png'" alt=""
-                    class="object-contain w-8 h-8 mx-3" />
+                    class="object-contain w-8 h-8 mx-3 rounded-full" />
             </router-link>
 
          

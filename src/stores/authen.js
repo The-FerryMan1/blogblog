@@ -1,8 +1,9 @@
 import { defineStore } from "pinia";
-import {getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged} from 'firebase/auth'
+import {getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile} from 'firebase/auth'
 import { useRouter } from "vue-router";
 import { onMounted, ref, onBeforeMount } from "vue";
-
+import { getDownloadURL, uploadBytes, ref as fer } from "firebase/storage";
+import { storage } from "@/firebase/firebase";
 
 const useAuthStore = defineStore('auth',()=>{
     const photos = ref({
@@ -10,6 +11,7 @@ const useAuthStore = defineStore('auth',()=>{
     })
     const router = useRouter()
     const errMessage = ref()
+    const imageUrl = ref(null)
     const user = ref({
         id: null,
         email: null,
@@ -27,7 +29,6 @@ const useAuthStore = defineStore('auth',()=>{
         const auth = getAuth()
         const unsub = onAuthStateChanged(auth, (USER)=>{
             if(USER){
-                unsub()
                 user.value = {id: USER?.uid, email: USER?.email, photo: USER?.photoURL, displayName: USER?.displayName, emailVer: USER?.emailVerified}
             }else{
                 
@@ -62,8 +63,31 @@ const useAuthStore = defineStore('auth',()=>{
         .catch((error)=> console.log(error.code))
     }
 
-    const updateUser = async()=>{
-        
+    const updateUser = async(nameDis, photo)=>{
+        const auth = getAuth()
+        await fileUploader(photo).then(()=>{
+            console.log(imageUrl.value)
+            updateProfile(auth.currentUser, {
+                displayName: nameDis, photoURL: imageUrl.value
+            })
+        }
+        ).then(()=>{
+            alert('profile updated')
+        }).catch((error)=>{
+            console.log(error)
+        })
+    }
+
+    const fileUploader = async (file) => {
+        const User = getAuth()
+        const storageRef = fer(storage, `images/${User.currentUser.email}/profilePic/${file.name}`)
+        try {
+            const snapshot = await uploadBytes(storageRef, file)
+            const downloadURL = await getDownloadURL(snapshot.ref);
+            imageUrl.value = downloadURL
+        } catch (err) {
+            console.log(err.code)
+        }
     }
 
 
@@ -73,6 +97,7 @@ const useAuthStore = defineStore('auth',()=>{
         LoginUser,
         logoutUser,
         user,
+        updateUser
 
     }
 

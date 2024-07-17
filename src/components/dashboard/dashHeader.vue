@@ -15,9 +15,9 @@ const OpenS = ()=>{
         <div class="flex border-2 w-full border-slate-800 p-3 justify-between items-center rounded-lg">
             <div class="flex">
                 <img :src="auth.user?.photo ? auth.user?.photo : 'http://localhost:3000/src/assets/user.png'" alt=""
-                    class="object-contain w-12 h-12 mx-3" />
+                    class="object-contain w-12 h-12 mx-3 rounded-full" />
                 <div class="flex flex-col justify-start">
-                    <p class="text-lg font-semibold">{{ auth.user?.email }}</p>
+                    <p class="text-lg font-semibold">{{ auth.user?.displayName ? auth.user?.displayName : auth.user?.email }}</p>
                     <p class="text-[.8rem] text-slate-500">id:{{ auth.user?.id }}</p>
                     <!-- <button @click="auth?.logoutUser">LOGOUT</button> -->
                 </div>
