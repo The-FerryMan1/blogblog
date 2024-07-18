@@ -4,8 +4,11 @@ import { useRouter } from "vue-router";
 import { onMounted, ref, onBeforeMount } from "vue";
 import { getDownloadURL, uploadBytes, ref as fer } from "firebase/storage";
 import { storage } from "@/firebase/firebase";
-
+import usePostStore from "./uploadPosts";
 const useAuthStore = defineStore('auth',()=>{
+    const poster = usePostStore()
+    const { usersPostUpdateProfile } = poster
+
     const photos = ref({
         photoURL: "http://localhost:3000/src/assets/user.png"
     })
@@ -72,6 +75,8 @@ const useAuthStore = defineStore('auth',()=>{
             })
         }
         ).then(()=>{
+            usersPostUpdateProfile(nameDis,imageUrl.value)
+        }).then(()=>{
             alert('profile updated')
         }).catch((error)=>{
             console.log(error)

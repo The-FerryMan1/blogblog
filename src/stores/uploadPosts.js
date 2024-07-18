@@ -39,7 +39,7 @@ const usePostStore = defineStore('posts', ()=>{
     }
     const postHandler = async (postData, file)=>{
         const User = getAuth()
-        const userWhoPost = [User.currentUser.email, User.currentUser.displayName, User.currentUser.photoURL]
+        const userWhoPost = {email: User.currentUser.email, displayName: User.currentUser.displayName, photoURL: User.currentUser.photoURL}
         await fileUploader(file).then(()=>{
             addDoc(postRef, {
                 userWhoPost: userWhoPost,
@@ -111,6 +111,11 @@ const usePostStore = defineStore('posts', ()=>{
         
     }
 
+
+    // const profileOfUserOnPost = async(image)=>{
+    //     const postRef = doc(db, "posts", `${id}`)
+    //     const User = getAuth()
+    // }
     // const userPosted = async()=>{
     //     const User = getAuth()
         
@@ -124,7 +129,7 @@ const usePostStore = defineStore('posts', ()=>{
 
     const usersPost = async () => {
         const User = getAuth()
-        const queryRef = query(postRef, where("userWhoPost", "array-contains", User.currentUser.email), orderBy('createdAt'))
+        const queryRef = query(postRef, where("userWhoPost.email", "==", User.currentUser.email), orderBy('createdAt'))
         try {
 
             onSnapshot(queryRef, (snap) => {
@@ -134,6 +139,22 @@ const usePostStore = defineStore('posts', ()=>{
                 })
 
                 mgaPostUsers.value = temp
+            })
+        } catch (error) {
+            console.log(error.code)
+        }
+    }
+    const usersPostUpdateProfile = async (disname, image) => {
+        const User = getAuth()
+        const queryRef = query(postRef, where("userWhoPost.email", "==", User.currentUser.email), orderBy('createdAt'))
+        try {
+
+            onSnapshot(queryRef, (snap) => {
+                snap.forEach((doc) => {
+                    updateDoc(doc.ref, {
+                        userWhoPost: {email: User.currentUser?.email, displayName: disname, photoURL: image }
+                    })
+                })
             })
         } catch (error) {
             console.log(error)
@@ -168,7 +189,8 @@ const usePostStore = defineStore('posts', ()=>{
         docUpdater,
         likeUpdater,
         mgaPostUsers,
-        usersPost
+        usersPost,
+        usersPostUpdateProfile
     }
 
     return logics

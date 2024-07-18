@@ -42,12 +42,12 @@ const likeHandler = (id) => {
         <router-link :to="data?.post.id">
             <section class="flex justify-start items-center space-x-2">
                 <img class="object-contain w-10 h-10 rounded-full"
-                    :src="data.post?.userWhoPost[2] ? data.post?.userWhoPost[2] : 'http://localhost:3000/src/assets/user.png'"
+                    :src="data.post?.userWhoPost?.photoURL ? data.post?.userWhoPost?.photoURL : 'http://localhost:3000/src/assets/user.png'"
                     alt="">
                 <div>
-                    <p class="text-base text-slate-800">{{ data.post?.userWhoPost[1] ? data.post?.userWhoPost[1] :
-    data.post?.userWhoPost[0] }}</p>
-                    <h3 class="text-sm text-slate-600">{{ data.post?.userWhoPost[0] }}</h3>
+                    <p class="text-base text-slate-800">{{ data.post?.userWhoPost?.displayName ? data.post?.userWhoPost.displayName :
+    data.post?.userWhoPost?.email}}</p>
+                    <h3 class="text-sm text-slate-600">{{ data.post?.userWhoPost?.email }}</h3>
                 </div>
             </section>
             <section class="my-2 w-full">
