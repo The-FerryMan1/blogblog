@@ -40,6 +40,7 @@ const usePostStore = defineStore('posts', ()=>{
     const postHandler = async (postData, file)=>{
         const User = getAuth()
         const userWhoPost = {email: User.currentUser.email, displayName: User.currentUser.displayName, photoURL: User.currentUser.photoURL}
+        console.log(User.currentUser.displayName)
         await fileUploader(file).then(()=>{
             addDoc(postRef, {
                 userWhoPost: userWhoPost,
@@ -57,6 +58,7 @@ const usePostStore = defineStore('posts', ()=>{
     }
 
     const fileUploader = async (file)=>{
+        if(!file) return
         const User = getAuth()
         const storageRef = fer(storage, `images/${User.currentUser.email}/${file.name}`)
 
@@ -152,7 +154,7 @@ const usePostStore = defineStore('posts', ()=>{
             onSnapshot(queryRef, (snap) => {
                 snap.forEach((doc) => {
                     updateDoc(doc.ref, {
-                        userWhoPost: {email: User.currentUser?.email, displayName: disname, photoURL: image }
+                        userWhoPost: {email: User.currentUser?.email, displayName: disname, photoURL: image?  image :User.currentUser.photoURL }
                     })
                 })
             })

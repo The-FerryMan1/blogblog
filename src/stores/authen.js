@@ -30,14 +30,14 @@ const useAuthStore = defineStore('auth',()=>{
 
     const getUser = async()=>{
         const auth = getAuth()
-        const unsub = onAuthStateChanged(auth, (USER)=>{
+        onAuthStateChanged(auth, (USER)=>{
             if(USER){
                 user.value = {id: USER?.uid, email: USER?.email, photo: USER?.photoURL, displayName: USER?.displayName, emailVer: USER?.emailVerified}
+                console.log('changed')
             }else{
                 
             }
         })
-        return unsub
     }
 
     const signUpUser = async(credentials)=>{
@@ -74,8 +74,9 @@ const useAuthStore = defineStore('auth',()=>{
                 displayName: nameDis, photoURL: imageUrl.value
             })
         }
-        ).then(()=>{
-            usersPostUpdateProfile(nameDis,imageUrl.value)
+        ).then(async()=>{
+            console.log(nameDis)
+           usersPostUpdateProfile(nameDis, imageUrl.value)
         }).then(()=>{
             alert('profile updated')
         }).catch((error)=>{
@@ -84,6 +85,7 @@ const useAuthStore = defineStore('auth',()=>{
     }
 
     const fileUploader = async (file) => {
+        if (!file) return
         const User = getAuth()
         const storageRef = fer(storage, `images/${User.currentUser.email}/profilePic/${file.name}`)
         try {
