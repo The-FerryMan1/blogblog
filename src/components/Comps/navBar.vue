@@ -11,14 +11,14 @@ const auth = useAuthStore()
                 Buratmedia</h1>
         </router-link>
         <nav class="mx-auto flex  font-mono font-semibold">
-            <div class="space-x-10 items-center md:block hidden" v-show="auth?.user?.id === null">
+            <div class="space-x-10 items-center md:block hidden" v-if="auth?.user?.id === null || auth?.user?.id === undefined">
                 <router-link :to="{ name: 'signUp' }" active-class="text-red-500" class="p-1">
                     Sign up
                 </router-link>
                 <router-link :to="{ name: 'login' }" active-class="text-red-500" class="p-1"> Login
                 </router-link>
             </div>
-            <router-link :to="{ name: 'profile' }" class="flex justify-center flex-row-reverse items-center  hover:bg-slate-400 p-1 rounded-lg"
+            <router-link v-else :to="{ name: 'profile' }" class="flex justify-center flex-row-reverse items-center  hover:bg-slate-400 p-1 rounded-lg"
                 v-show="auth?.user?.id !== null">
                 Profile
                 <img :src="auth.user?.photo ? auth.user?.photo : 'http://localhost:3000/src/assets/user.png'" alt=""

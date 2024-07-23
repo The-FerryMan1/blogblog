@@ -74,7 +74,7 @@ router.beforeEach(async(to, from)=>{
     }else{
       return { 
         name: 'UnAuthedHome',
-        query: {redirect: to.fullPath}
+        query: {redirect: "home"}
       }
     }
   }

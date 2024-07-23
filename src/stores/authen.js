@@ -15,14 +15,14 @@ const useAuthStore = defineStore('auth',()=>{
     const router = useRouter()
     const errMessage = ref()
     const imageUrl = ref(null)
-    const user = ref({
+    const user = ref([{
         id: null,
         email: null,
         photo: null,
         displayName: null,
         emailVer: null,
 
-    })
+    }])
 
     onMounted(()=>{
         getUser()
@@ -30,7 +30,7 @@ const useAuthStore = defineStore('auth',()=>{
 
     const getUser = async()=>{
         const auth = getAuth()
-        onAuthStateChanged(auth, (USER)=>{
+       const unsub =  onAuthStateChanged(auth, (USER)=>{
             if(USER){
                 user.value = {id: USER?.uid, email: USER?.email, photo: USER?.photoURL, displayName: USER?.displayName, emailVer: USER?.emailVerified}
                 console.log('changed')
@@ -38,6 +38,7 @@ const useAuthStore = defineStore('auth',()=>{
                 
             }
         })
+       
     }
 
     const signUpUser = async(credentials)=>{
@@ -75,7 +76,8 @@ const useAuthStore = defineStore('auth',()=>{
             })
         }
         ).then(async()=>{
-            console.log(nameDis)
+            user.value.displayName = nameDis
+            user.value.photo = imageUrl.value
            usersPostUpdateProfile(nameDis, imageUrl.value)
         }).then(()=>{
             alert('profile updated')
