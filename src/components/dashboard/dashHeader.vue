@@ -26,7 +26,7 @@ const OpenS = ()=>{
 
             <button @click="OpenS"
                 class="bg-blue-600 py-3 px-3 ms-10 rounded-lg w-[1/3] border-2 border-slate-800 hover:bg-blue-300 flex gap-3 text-white"><img
-                    src="/src/assets/new-post.png" alt="" class="object-contain drop-shadow-lg w-6 h-6">Post</button>
+                    src="/src/assets/new-post.png" alt="" class="object-contain drop-shadow-lg w-6 h-6">Create Post</button>
         </div>
 
 

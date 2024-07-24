@@ -37,7 +37,8 @@ const modalHandler = ()=>{
     </div>
     <Teleport to="#app">
         <div v-show="openOrNot" class="w-full h-full fixed grid grid-cols-1 place-items-center">
-            <DashModal />
+         
+            <DashModal @open="modalHandler" />
             <div @click="modalHandler" class="w-full h-screen fixed bg-black opacity-80 z-0"></div>
         </div>
     </Teleport>

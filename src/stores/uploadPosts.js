@@ -13,6 +13,7 @@ const usePostStore = defineStore('posts', ()=>{
     const mgaPost = ref(null)
     const mgaPostUsers = ref(null)
     const imahe = ref(null)
+    const postLoader = ref(true)
 
     onMounted(()=>{
         displayPosts()
@@ -21,7 +22,6 @@ const usePostStore = defineStore('posts', ()=>{
     
     const displayPosts = async()=>{
         const queryRef = query(postRef, orderBy('createdAt'))
-
         try {
             onSnapshot(queryRef, (snap) => {
                 loadingStat.value = true
@@ -42,6 +42,7 @@ const usePostStore = defineStore('posts', ()=>{
         const userWhoPost = {email: User.currentUser.email, displayName: User.currentUser.displayName, photoURL: User.currentUser.photoURL}
         console.log(User.currentUser.displayName)
         await fileUploader(file).then(()=>{
+            postLoader.value = true
             addDoc(postRef, {
                 userWhoPost: userWhoPost,
                 likes: [],
@@ -49,7 +50,7 @@ const usePostStore = defineStore('posts', ()=>{
                 content: postData,
                 imageURL: imahe.value,
                 createdAt: serverTimestamp()
-            }).then(()=> alert('your post successfully uploaded'))
+            }).then(() => postLoader.value = false)
         }).catch((error) => {
             console.log(error)
         })
@@ -112,22 +113,6 @@ const usePostStore = defineStore('posts', ()=>{
 
         
     }
-
-
-    // const profileOfUserOnPost = async(image)=>{
-    //     const postRef = doc(db, "posts", `${id}`)
-    //     const User = getAuth()
-    // }
-    // const userPosted = async()=>{
-    //     const User = getAuth()
-        
-    //     const filteredarray = mgaPost?.value?.filter((item)=>{
-    //         return item?.userWhoPost[0] == User?.currentUser?.email
-    //     })
-
-    //     mgaPostUsers.value = filteredarray
-       
-    // }
 
     const usersPost = async () => {
         const User = getAuth()
@@ -192,7 +177,8 @@ const usePostStore = defineStore('posts', ()=>{
         likeUpdater,
         mgaPostUsers,
         usersPost,
-        usersPostUpdateProfile
+        usersPostUpdateProfile,
+        postLoader
     }
 
     return logics
