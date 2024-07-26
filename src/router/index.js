@@ -18,6 +18,12 @@ const routes = [
         component: ()=> import('@/components/dashboard/profilePanel.vue'),
         name: 'profile',
         meta: { requiresAuth: true }
+      },
+      {
+        path: '/post/:id',
+        component: ()=> import('@/components/postPage/postPage.vue'),
+        name: 'post-page',
+        meta: { requiresAuth: true }
       }
     ]
   },

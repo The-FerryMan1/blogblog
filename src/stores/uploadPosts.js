@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { getAuth } from "firebase/auth";
 import { db } from "@/firebase/firebase";
-import { addDoc, collection, increment, onSnapshot, orderBy, query, serverTimestamp, updateDoc, doc, arrayUnion, arrayRemove, where} from "firebase/firestore";
+import { addDoc, collection, increment, onSnapshot, orderBy, query, serverTimestamp, updateDoc, doc, arrayUnion, arrayRemove, where, getDoc} from "firebase/firestore";
 import { storage } from "@/firebase/firebase";
 import { ref as fer, getDownloadURL, listAll, uploadBytes } from "firebase/storage";
 import { computed, onMounted, ref  } from "vue";
@@ -40,7 +40,6 @@ const usePostStore = defineStore('posts', ()=>{
     const postHandler = async (postData, file)=>{
         const User = getAuth()
         const userWhoPost = {email: User.currentUser.email, displayName: User.currentUser.displayName, photoURL: User.currentUser.photoURL}
-        console.log(User.currentUser.displayName)
         await fileUploader(file).then(()=>{
             postLoader.value = true
             addDoc(postRef, {
@@ -76,18 +75,19 @@ const usePostStore = defineStore('posts', ()=>{
         }
     }
 
-    const docUpdater = async(id, newText)=>{
+    const docUpdater = async(id, newText, imager)=>{
         const postRef = doc(db, 'posts', id)
 
-        await updateDoc(postRef, {
-            content: {
-                text: newText 
-            }
-        }).then(()=>{
-            alert('your post has been upadated')
-        }).catch((error)=>{
-            console.log(error.code)
-        })
+        await fileUploader(imager).then(async()=>{
+            await updateDoc(postRef, {
+                 content: {
+                    text: newText 
+                },
+                imageURL: imahe.value,
+
+            })
+        }).catch((err)=> alert(err))
+        
     }
     const likeUpdater = async (id, likeStat) => {
         const postRef = doc(db, "posts", `${id}`)
@@ -148,6 +148,15 @@ const usePostStore = defineStore('posts', ()=>{
         }
     }
 
+    const getOnePost = async(id)=>{
+        const postRef = doc(db, "posts", `${id}`)
+        const onePost = await getDoc(postRef)
+        return onePost.data()
+    }
+    // const updateDocContent = async()=>{
+
+    // }
+
 
 
 
@@ -178,7 +187,8 @@ const usePostStore = defineStore('posts', ()=>{
         mgaPostUsers,
         usersPost,
         usersPostUpdateProfile,
-        postLoader
+        postLoader,
+        getOnePost
     }
 
     return logics

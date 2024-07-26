@@ -1,66 +1,43 @@
 <script setup>
-import { ref } from 'vue';
 import usePostStore from '@/stores/uploadPosts';
-import useAuthStore from '@/stores/authen';
+import { ref } from 'vue';
 import postLoader from './postLoader.vue';
-
-const emit = defineEmits(['open'])
-
+const post = usePostStore()
+const props = defineProps({text: String, id: String})
+const emit = defineEmits(['open', 'refresh'])
+const loader = ref(false)
 const OpenS = () => {
     emit('open')
 }
-const auth = useAuthStore()
-const post = usePostStore()
-const inputFile = ref(null)
-const textIto = ref('')
-const images = ref(null)
-const loader = ref(false)
+const getRef = ()=>{
+    emit('refresh')
+}
 
 
-
-
-const imageFile = () => {
-    inputFile.value = ' '
+const textIto = ref(null)
+const imahePost = ref(null)
+const submitsender = ()=>{
+    loader.value = true
+    post?.docUpdater(props?.id, textIto.value, imahePost.value).then(()=>{
+        getRef()
+    }).then(()=>{
+        textIto.value = null
+        loader.value =false
+        imahePost.value = null
+        OpenS()
+    })
 }
 
 const imagePicker = (e) => {
-    images.value = e.target.files[0]
+    imahePost.value = e.target.files[0]
 }
-
-
-
-const submitHandler = async () => {
-    const postData = {
-        text: textIto.value,
-        files: images.value?.name
-    }
-
-    try {
-        loader.value = true
-        await post.postHandler(postData, images.value)
-        inputFile.value = ''
-        textIto.value = ''
-        images.value = null       
-        loader.value = false
-        OpenS()
-    } catch (error) {
-        
-    }
-  
-    
-
-   
-    
-}
-
-
 </script>
 
 <template>
-    <form @submit.prevent="submitHandler" action=""
+    <form @submit.prevent="submitsender" action=""
         class="bg-white p-2 z-30 rounded-lg h-[40%] w-[40%] flex flex-col relative">
-
-        <button :disabled="loader" @click="OpenS" type="button" class="absolute top-0 right-0 translate-x-7 -translate-y-8">
+        <h3 class="p-2 text-lg font-semibold">Edit post</h3>
+        <button @click="OpenS" type="button" class="absolute top-0 right-0 translate-x-7 -translate-y-8">
             <svg class="w-12 h-12 " viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
                 stroke="transparent">
                 <g id="SVGRepo_bgCarrier" stroke-width="0" />
@@ -72,23 +49,19 @@ const submitHandler = async () => {
                 </g>
             </svg>
         </button>
-        <div class="absolute top-0 left-0 -translate-x-10 -translate-y-8">
-            <img :src="auth.user?.photo ? auth.user?.photo : 'http://localhost:3000/src/assets/user.png'" alt=""
-                class="w-[8.5%] h-[8.5%] rounded-full outline-white outline">
-        </div>
+
         <textarea class="resize-none outline-none p-2 h-[100%] w-[100%]" v-model="textIto"
-            placeholder="What is on your mind?"></textarea>
-        <!-- <input @change="imagePicker" ref="inputFile" name="files" id="inputFile" type="file" class="hidden"> -->
+            :placeholder="props.text"></textarea>
         <section class="flex  justify-between p-2 items-start border-t-2  border-slate-400 text-base">
 
-            <input @change="imagePicker" ref="inputFile" name="files" id="inputFile" type="file" class="file:mr-4 file:py-2 file:px-4
+            <input @change="imagePicker" type="file" class="file:mr-4 file:py-2 file:px-4
       file:rounded-full file:border-0
       file:text-sm file:font-semibold
       file:bg-blue-50 file:text-blue-700
       hover:file:bg-blue-100">
 
 
-            <button class="px-3 py-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-300 ">Create</button>
+            <button class="px-3 py-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-300 ">Save</button>
         </section>
         <div v-show="loader"
             class="absolute  bg-slate-500 opacity-60 z-30 h-[100%] w-[100%] rounded-lg top-[0%] left-[0%] flex flex-col justify-center items-center">

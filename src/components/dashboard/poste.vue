@@ -39,9 +39,9 @@ const likeHandler = (id) => {
 
 <template>
     <div class="w-full h-full">
-        <router-link :to="data?.post.id">
+        <router-link :to="{ name: 'post-page', params: { id: data?.post.id }}">
             <section class="flex justify-start items-center space-x-2">
-                <img class="object-contain w-10 h-10 rounded-full border-2 border-slate-800"
+                <img class="object-contain w-10 h-10 rounded-full "
                     :src="data.post?.userWhoPost?.photoURL ? data.post?.userWhoPost?.photoURL : 'http://localhost:3000/src/assets/user.png'"
                     alt="">
                 <div>
@@ -54,15 +54,15 @@ const likeHandler = (id) => {
             <section class="my-2 w-full ">
                 <p>{{ data.post?.content?.text }}</p>
             </section>
-            <section class="border-2 border-slate-800 rounded-lg">
+            <section class=" rounded-lg">
                 <img class="object-cover h-64 w-full rounded-lg" :src="data.post?.imageURL"
                     :alt="data.post?.content?.text">
             </section>
         </router-link>
-        <section class="flex border-t-2 border-slate-800 mt-2 p-1 justify-between items-center">
+        <section class="flex  mt-2 p-1 justify-between items-center">
             <div class="flex space-x-7 items-center">
                 <button @click="likeHandler(data?.post.id)" type="button"
-                    :class="data.post?.likes?.includes(auth.user.email) ? 'text-sm text-white py-2 px-5 bg-blue-600 relative border-2 mt-2 rounded-lg  border-slate-800 hover:bg-blue-500' : 'text-sm text-white py-2 px-5 bg-slate-600 relative  mt-2 rounded-lg border-2 border-slate-800 hover:bg-slate-700'">
+                    :class="data.post?.likes?.includes(auth.user.email) ? 'text-sm text-white py-2 px-5 bg-blue-600 relative mt-2 rounded-lg   hover:bg-blue-500' : 'text-sm text-white py-2 px-5 bg-slate-600 relative  mt-2 rounded-lg  hover:bg-slate-700'">
                     <div
                         class="absolute top-0 -translate-y-2 translate-x-3 right-0 outline outline-white px-2 text-[12px] bg-red-800 rounded-full text-white">
                         {{ likeValue }}
@@ -89,9 +89,9 @@ const likeHandler = (id) => {
                     </svg>
                 </button>
                 <button type="button"
-                    class='text-sm text-white py-2 px-5 bg-slate-600 relative border-2 mt-2 rounded-lg'>
+                    class='text-sm text-white py-2 px-5 bg-slate-600 relative mt-2 rounded-lg'>
                     <div
-                        class="absolute top-0 -translate-y-2 translate-x-3 right-0 outline outline-white px-2 text-[12px] bg-red-800 rounded-full text-white border-2 border-slate-800">
+                        class="absolute top-0 -translate-y-2 translate-x-3 right-0 outline outline-white px-2 text-[12px] bg-red-800 rounded-full text-white ">
                         {{ data.post?.shares }}
                     </div>
                     <svg class="w-6 h-6" viewBox="-0.5 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg"
@@ -110,7 +110,7 @@ const likeHandler = (id) => {
                     </svg>
                 </button>
             </div>
-            <div class="flex justify-center items-center border-2 border-slate-800 rounded-lg">
+            <div class="flex justify-center items-center  rounded-lg">
                 <p class="text-sm text-slate-700 py-2 px-5">{{ formattedData }}</p>
             </div>
 
