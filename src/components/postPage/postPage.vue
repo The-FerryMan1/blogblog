@@ -82,10 +82,13 @@ const likeHandler = (id) => {
                         <h3 class="text-lg text-black font-semibold">{{ tsop?.userWhoPost?.displayName }}</h3>
                         <p class="text-md text-slate-600">{{ tsop?.userWhoPost?.email }}</p>
                     </div>
-                    <div class="ms-auto me-4">
-                        <button v-show="auth?.user?.email == tsop?.userWhoPost?.email" @click="modalHandler"
-                            class="flex gap-2 px-2 py-2 text-white hover:opacity-60 items-center rounded-lg bg-blue-500  "><img
-                                class="h-5 w-5" src="/src/assets/icons8-edit.svg" alt=""> edit</button>
+                    <div v-show="auth?.user?.email == tsop?.userWhoPost?.email" class="ms-auto me-4 flex gap-2 p-2">
+                        <button @click="modalHandler"
+                            class="flex gap-2 px-4 py-2 text-white hover:opacity-60 items-center rounded-lg bg-blue-500  "><img
+                                class="h-5 w-5" src="/src/assets/icons8-edit.svg" alt=""></button>
+                        <button @click="post?.deletePost(route.params.id)"
+                            class="flex gap-2 px-4 py-2 text-white hover:opacity-60 items-center rounded-lg bg-red-500  "><img
+                                class="h-5 w-5" src="/src/assets/delete-svgrepo-com.svg" alt=""></button>
                     </div>
 
                 </section>
@@ -174,7 +177,8 @@ const likeHandler = (id) => {
     <Teleport to="#app">
         <div v-show="openOrNot" class="w-full h-full fixed grid grid-cols-1 place-items-center">
 
-            <updatePostModal @open="modalHandler" :text="tsop?.content?.text" :id="route.params.id" @refresh="getPost"/>
+            <updatePostModal @open="modalHandler" :text="tsop?.content?.text" :id="route.params.id"
+                @refresh="getPost" />
             <div @click="modalHandler" class="w-full h-screen fixed bg-black opacity-80 z-0"></div>
         </div>
     </Teleport>

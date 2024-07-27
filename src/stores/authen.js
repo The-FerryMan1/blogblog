@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import {getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile} from 'firebase/auth'
+import {getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile, reauthenticateWithCredential} from 'firebase/auth'
 import { useRouter } from "vue-router";
 import { onMounted, ref, onBeforeMount } from "vue";
 import { getDownloadURL, uploadBytes, ref as fer } from "firebase/storage";
@@ -12,6 +12,8 @@ const useAuthStore = defineStore('auth',()=>{
     const photos = ref({
         photoURL: "http://localhost:3000/src/assets/user.png"
     })
+
+
     const router = useRouter()
     const errMessage = ref()
     const imageUrl = ref(null)
@@ -29,11 +31,11 @@ const useAuthStore = defineStore('auth',()=>{
     })
 
     const getUser = async()=>{
-        const auth = getAuth()
+    const auth = getAuth()
        const unsub =  onAuthStateChanged(auth, (USER)=>{
             if(USER){
                 user.value = {id: USER?.uid, email: USER?.email, photo: USER?.photoURL, displayName: USER?.displayName, emailVer: USER?.emailVerified}
-                console.log('changed')
+                
             }else{
                 
             }
@@ -70,7 +72,7 @@ const useAuthStore = defineStore('auth',()=>{
     const updateUser = async(nameDis, photo)=>{
         const auth = getAuth()
         await fileUploader(photo).then(()=>{
-            console.log(imageUrl.value)
+            
             updateProfile(auth.currentUser, {
                 displayName: nameDis, photoURL: imageUrl.value
             })
@@ -97,6 +99,9 @@ const useAuthStore = defineStore('auth',()=>{
         } catch (err) {
             console.log(err.code)
         }
+    }
+    const confirmUser = async()=>{
+        const auth = getAuth()
     }
 
 

@@ -1,13 +1,15 @@
 import { defineStore } from "pinia";
 import { getAuth } from "firebase/auth";
 import { db } from "@/firebase/firebase";
-import { addDoc, collection, increment, onSnapshot, orderBy, query, serverTimestamp, updateDoc, doc, arrayUnion, arrayRemove, where, getDoc} from "firebase/firestore";
+import { addDoc, collection, onSnapshot, orderBy, query, serverTimestamp, updateDoc, doc, arrayUnion, arrayRemove, where, getDoc, deleteDoc} from "firebase/firestore";
 import { storage } from "@/firebase/firebase";
-import { ref as fer, getDownloadURL, listAll, uploadBytes } from "firebase/storage";
-import { computed, onMounted, ref  } from "vue";
+import { ref as fer, getDownloadURL, uploadBytes } from "firebase/storage";
+import { onMounted, ref  } from "vue";
+import { useRouter } from "vue-router";
+
 
 const usePostStore = defineStore('posts', ()=>{
-
+    const router = useRouter()
     const postRef = collection(db, 'posts')
     const loadingStat = ref(true)
     const mgaPost = ref(null)
@@ -30,7 +32,7 @@ const usePostStore = defineStore('posts', ()=>{
                     temp.push({ id: doc.id, ...doc.data() })
                 })
                 loadingStat.value = false
-                mgaPost.value = temp
+                mgaPost.value = temp.reverse()
             })
         } catch (error) {
             console.log(error)
@@ -64,10 +66,10 @@ const usePostStore = defineStore('posts', ()=>{
 
         try {
             const snapshot = await uploadBytes(storageRef, file)
-            console.log('File uploaded successfully:', snapshot.metadata.name);
+            
 
             const downloadURL = await getDownloadURL(snapshot.ref);
-            console.log('File available at:', downloadURL);
+            
 
             imahe.value = downloadURL
         } catch (err) {
@@ -77,15 +79,35 @@ const usePostStore = defineStore('posts', ()=>{
 
     const docUpdater = async(id, newText, imager)=>{
         const postRef = doc(db, 'posts', id)
-
+        if(!newText && !imager ) return
         await fileUploader(imager).then(async()=>{
-            await updateDoc(postRef, {
+            if(imager && newText){
+                console.log("may image at text")
+                await updateDoc(postRef, {
                  content: {
                     text: newText 
                 },
                 imageURL: imahe.value,
-
-            })
+                })
+            }
+            else if(!imager && newText){
+                console.log("walang image")
+                await updateDoc(postRef, {
+                 content: {
+                    text: newText 
+                }
+                })
+            }
+            else if(imager && !newText){
+                console.log("may image walang text")
+                await updateDoc(postRef, {
+                  imageURL: imahe.value,
+                })
+            }
+            else{
+                 return
+            }
+            
         }).catch((err)=> alert(err))
         
     }
@@ -157,27 +179,17 @@ const usePostStore = defineStore('posts', ()=>{
 
     // }
 
-
-
-
-
-    // const fileDiplayer = async()=>{
-    //     const User = getAuth()
-    //     const storageRef = fer(storage, `images/${User.currentUser.email}/`)
-    //     let temp = []
-    //     listAll(storageRef).then((response)=>{
-    //         response.items.forEach((item)=>{
-    //             console.log
-    //             getDownloadURL(item).then((url)=>{
-    //                 console.log(url)
-    //                 temp.push(url)
-    //             })
-               
-    //         })
-           
-    //     }).catch((err)=>console.log(err.code))
-    //     mgaImage.value = temp
-    // }
+    const deletePost = async(id)=>{
+        const postRef = doc(db, "posts", `${id}`)
+        alert('Are you sure?')
+        await deleteDoc(postRef).then(()=>{
+            alert('your post successfully deleted')
+            
+        }).then(()=>{
+            router.push({name: 'home'})
+        })
+        .catch((err)=> console.log(err.code))
+    }
     const logics = {
         postHandler,
         mgaPost,
@@ -188,7 +200,8 @@ const usePostStore = defineStore('posts', ()=>{
         usersPost,
         usersPostUpdateProfile,
         postLoader,
-        getOnePost
+        getOnePost,
+        deletePost
     }
 
     return logics
