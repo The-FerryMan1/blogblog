@@ -47,7 +47,9 @@ const usePostStore = defineStore('posts', ()=>{
             addDoc(postRef, {
                 userWhoPost: userWhoPost,
                 likes: [],
-                shares: 0,
+                comment: [
+                    
+                ],
                 content: postData,
                 imageURL: imahe.value,
                 createdAt: serverTimestamp()
@@ -66,11 +68,7 @@ const usePostStore = defineStore('posts', ()=>{
 
         try {
             const snapshot = await uploadBytes(storageRef, file)
-            
-
             const downloadURL = await getDownloadURL(snapshot.ref);
-            
-
             imahe.value = downloadURL
         } catch (err) {
             console.log(err.code)
@@ -190,6 +188,21 @@ const usePostStore = defineStore('posts', ()=>{
         })
         .catch((err)=> console.log(err.code))
     }
+
+    const Addcomment = async(comment, id)=>{
+        const postRef = doc(db, "posts", `${id}`)
+        const User = getAuth()
+        const loggedUser = User?.currentUser
+        const commentData = {disName: loggedUser?.displayName, pfp: loggedUser?.photoURL, email: loggedUser?.email, text: comment}
+        await updateDoc(postRef, {
+            commt: arrayUnion(commentData)
+        }).then(()=>{
+            alert('your comment successfully added')
+        }).catch((error)=>{
+            alert(error.code)
+        })
+
+    }
     const logics = {
         postHandler,
         mgaPost,
@@ -201,7 +214,8 @@ const usePostStore = defineStore('posts', ()=>{
         usersPostUpdateProfile,
         postLoader,
         getOnePost,
-        deletePost
+        deletePost,
+        Addcomment
     }
 
     return logics

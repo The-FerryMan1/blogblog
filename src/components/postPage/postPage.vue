@@ -1,5 +1,5 @@
 <script setup>
-import {onMounted, ref, computed} from 'vue';
+import {onMounted, ref, computed, watch} from 'vue';
 import { useRoute } from 'vue-router';
 import usePostStore from '@/stores/uploadPosts';
 import useAuthStore from '@/stores/authen';
@@ -17,6 +17,13 @@ onMounted(()=>{
     getPost()
     
 })
+
+post?.$subscribe(()=>{
+    getPost()
+}, {detached: true})
+// watch(post?.mgaPost, ()=>{
+//     console.log("change")
+// },{deep: true})
 
 const getPost = ()=>{
     post.getOnePost(route.params.id).then((item) => {
@@ -43,18 +50,25 @@ const likeHandler = (id) => {
     if (tsop.value?.likes?.includes(auth.user.email)) {
         likeStatus.value = false
         post.likeUpdater(id, likeStatus.value)
-        getPost()
+        // getPost()
     } else {
         likeStatus.value = true
         post.likeUpdater(id, likeStatus.value)
-        getPost()
+        // getPost()
     }
+}
+
+const comment = ref(null)
+const handleCommentSubmit = ()=>{
+    post.Addcomment(comment.value, route.params.id).then(()=>{
+        
+    })
 }
 </script>
 
 <template>
     <KeepAlive>
-        <div class="w-1/2 h-full p-2 overflow-y-auto no-scrollbar flex flex-col justify-start items-start bg-[#252525]">
+        <div class="w-1/2 h-full p-2 overflow-y-auto no-scrollbar flex flex-col justify-start items-start bg-[#c9c9c9]">
             <router-link to="/" class="rounded-full py-2 bg-blue-500 w-10 h-10">
                 <svg class="h-full w-full" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" fill="#ffffff"
                     stroke="#ffffff">
@@ -96,9 +110,9 @@ const likeHandler = (id) => {
 
                 <section class="w-full p-2 bg-white rounded-lg">
                     <p class="w-full text-wrap  p-2">{{ tsop?.content?.text }}</p>
-                    <a :href="tsop?.imageURL" class="relative w-full">
+                    <a :href="tsop?.imageURL" class="relative w-full drop-shadow-lg">
                         <img :src="tsop?.imageURL" alt=""
-                            class="w-full h-1/2 object-cover rounded-lg brightness-75 hover:brightness-100">
+                            class="w-full h-[300px] object-cover rounded-lg brightness-75 hover:brightness-100">
                         <p
                             class="absolute text-sm shadow-lg text-black bottom-0 p-2 right-0 bg-white border-l-2 border-t-2 rounded-l-lg">
                             {{ formattedData }}</p>
@@ -106,7 +120,7 @@ const likeHandler = (id) => {
                     <section class="w-full p-2 mt-2">
                         <div class="flex space-x-7 items-center">
                             <button @click="likeHandler(route.params.id)" type="button"
-                                :class="tsop?.likes?.includes(auth.user.email) ? 'group text-sm text-white py-2 px-5 bg-blue-600 relative border-2 mt-2 rounded-lg  border-slate-800 hover:bg-blue-500' : 'text-sm text-white py-2 px-5 group bg-slate-600 relative  mt-2 rounded-lg border-2 border-slate-800 hover:bg-slate-700'">
+                                :class="tsop?.likes?.includes(auth.user.email) ? 'group text-sm text-white py-2 px-5 bg-blue-600 relative  mt-2 rounded-lg   hover:bg-blue-500 drop-shadow-lg' : 'drop-shadow-lg text-sm text-white py-2 px-5 group bg-slate-600 relative  mt-2 rounded-lg   hover:bg-slate-700'">
                                 <div
                                     class="absolute top-0 -translate-y-2 translate-x-3 right-0 outline outline-white px-2 text-[12px] bg-red-800 rounded-full text-white">
                                     {{ likeValue }}
@@ -143,28 +157,41 @@ const likeHandler = (id) => {
                                     </p>
                                 </div>
                             </button>
-                            <button type="button"
-                                class='text-sm text-white py-2 px-5 bg-slate-600 relative border-2 mt-2 rounded-lg'>
-                                <div
-                                    class="absolute top-0 -translate-y-2 translate-x-3 right-0 outline outline-white px-2 text-[12px] bg-red-800 rounded-full text-white border-2 border-slate-800">
-                                    {{ tsop?.shares }}
-                                </div>
-                                <svg class="w-6 h-6" viewBox="-0.5 0 25 25" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg" stroke="#ffffff">
 
-                                    <g id="SVGRepo_bgCarrier" stroke-width="0" />
 
-                                    <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" />
 
-                                    <g id="SVGRepo_iconCarrier">
-                                        <path
-                                            d="M13.47 4.13998C12.74 4.35998 12.28 5.96 12.09 7.91C6.77997 7.91 2 13.4802 2 20.0802C4.19 14.0802 8.99995 12.45 12.14 12.45C12.34 14.21 12.79 15.6202 13.47 15.8202C15.57 16.4302 22 12.4401 22 9.98006C22 7.52006 15.57 3.52998 13.47 4.13998Z"
-                                            stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"
-                                            stroke-linejoin="round" />
-                                    </g>
+                        </div>
+                        <div class="p-2 my-5">
+                            <form @submit.prevent="handleCommentSubmit" action=""
+                                class="w-full p-1 gap-2 flex flex-col">
+                                <h3 class="text-lg font-semibold">Make a comment</h3>
+                                <textarea v-model="comment" type="text"
+                                    class="w-full border-slate-400 border-2 rounded-lg h-[120px] resize-none p-2 drop-shadow-md">
+                                </textarea>
+                                <button class="p-2 bg-blue-500 text-white rounded-lg self-end text-md"> Submit</button>
+                            </form>
 
-                                </svg>
-                            </button>
+                            <h3 class="text-lg font-semibold">Comment section</h3>
+                            <ul class="ms-2 my-3 ">
+                                <li v-for="commt in tsop?.commt"
+                                    class="text-wrap break-al text-black flex flex-col drop-shadow-lg p-3 gap-3 border-b-2">
+                                    <div class="flex gap-2 justify-start w-full">
+                                        <img :src="commt?.pfp" alt="" class="w-12 h-12 rounded-full drop-shadow-lg">
+                                        <div>
+                                            <p>{{ commt?.disName }}</p>
+                                            <p class="text-sm font-light text-slate-500">{{ commt?.email }}</p>
+                                        </div>
+                                        <!-- future update -->
+                                        <!-- <div v-show="commt?.email === auth?.user?.email" class="ms-auto space-x-5">
+                                            <button>Edit</button>
+                                            <button>Delete</button>
+                                        </div> -->
+                                    </div>
+                                    <p class="p-2 ms-5 break-all">
+                                        {{ commt?.text }}
+                                    </p>
+                                </li>
+                            </ul>
                         </div>
 
                     </section>

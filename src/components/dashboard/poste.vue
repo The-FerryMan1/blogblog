@@ -24,6 +24,7 @@ const likeValue = computed(()=>{
     return totalLikes
 })
 
+
 const likeStatus = ref(null)
 const likeHandler = (id) => {
     if (data.post?.likes?.includes(auth.user.email)){
@@ -88,27 +89,7 @@ const likeHandler = (id) => {
 
                     </svg>
                 </button>
-                <button type="button"
-                    class='text-sm text-white py-2 px-5 bg-slate-600 relative mt-2 rounded-lg'>
-                    <div
-                        class="absolute top-0 -translate-y-2 translate-x-3 right-0 outline outline-white px-2 text-[12px] bg-red-800 rounded-full text-white ">
-                        {{ data.post?.shares }}
-                    </div>
-                    <svg class="w-6 h-6" viewBox="-0.5 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg"
-                        stroke="#ffffff">
-
-                        <g id="SVGRepo_bgCarrier" stroke-width="0" />
-
-                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" />
-
-                        <g id="SVGRepo_iconCarrier">
-                            <path
-                                d="M13.47 4.13998C12.74 4.35998 12.28 5.96 12.09 7.91C6.77997 7.91 2 13.4802 2 20.0802C4.19 14.0802 8.99995 12.45 12.14 12.45C12.34 14.21 12.79 15.6202 13.47 15.8202C15.57 16.4302 22 12.4401 22 9.98006C22 7.52006 15.57 3.52998 13.47 4.13998Z"
-                                stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                        </g>
-
-                    </svg>
-                </button>
+                
             </div>
             <div class="flex justify-center items-center  rounded-lg">
                 <p class="text-sm text-slate-700 py-2 px-5">{{ formattedData }}</p>
